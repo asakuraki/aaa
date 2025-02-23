@@ -5,8 +5,9 @@ import pyperclip
 import about
 import os
 
-class CharacterCardEditor:
+class CharacterCardEditor(tk.Frame):
     def __init__(self, root):
+        super().__init__(root)
         self.root = root
         self.data = {}
         self.appearance_entries = {}  # 外貌输入框字典
