@@ -9,6 +9,7 @@ class CharacterCardEditor(tk.Frame):
     def __init__(self, root):
         super().__init__(root)
         self.root = root
+        self.tk = root.tk  # Initialize tk attribute
         self.data = {}
         self.appearance_entries = {}  # 外貌输入框字典
         self.attire_entries = {}      # 服装输入框字典
@@ -75,10 +76,20 @@ class CharacterCardEditor(tk.Frame):
             ("皮肤", "skin"), ("身材", "body")
         ]
 
+        # Create a frame for each row
+        row_frame = ttk.Frame(appearance_frame)
+        row_frame.pack(fill="x", pady=2)
+        
         for i, (label, key) in enumerate(entries):
-            ttk.Label(appearance_frame, text=label+": ").grid(row=i//4, column=(i%4)*2, sticky="w")
-            entry = ttk.Entry(appearance_frame)
-            entry.grid(row=i//4, column=(i%4)*2+1, sticky="ew")
+            if i > 0 and i % 4 == 0:
+                row_frame = ttk.Frame(appearance_frame)
+                row_frame.pack(fill="x", pady=2)
+                
+            label_widget = ttk.Label(row_frame, text=label+": ")
+            label_widget.pack(side="left", padx=2)
+            
+            entry = ttk.Entry(row_frame, width=15)
+            entry.pack(side="left", padx=2)
             self.appearance_entries[key] = entry
 
         # 服装信息
@@ -234,16 +245,25 @@ class CharacterCardEditor(tk.Frame):
 
         # 人际关系
         if "relationship" in data:
-            for name, desc_list in data["relationship"].items():
-                self.add_relationship()
+            # 先清空已有的关系界面组件
+            for widget in self.relationship_frame.winfo_children():
+                widget.destroy()
+
+            for name, relationship_data in data["relationship"].items():
+                self.add_relationship()  # 创建新的关系框架
                 dynamic_frames = [w for w in self.relationship_frame.winfo_children() if isinstance(w, ttk.Frame)]
                 last_rel = dynamic_frames[-1] if dynamic_frames else None
-                
+        
                 if last_rel:
                     entry = [child for child in last_rel.winfo_children() if isinstance(child, ttk.Entry)][0]
                     texts = [child for child in last_rel.winfo_children() if isinstance(child, tk.Text)]
                     entry.insert(0, name)
-                    texts[0].insert("1.0", "\n".join(desc_list))
+            
+            # 确保有两个文本框，分别填充 description 和 features
+                    if len(texts) > 1:
+                        texts[0].insert("1.0", "\n".join(relationship_data.get("description", [])))
+                        texts[1].insert("1.0", "\n".join(relationship_data.get("features", [])))
+
         
         # 喜好系统
         self.likes_text.delete("1.0", tk.END)
@@ -327,6 +347,7 @@ class CharacterCardEditor(tk.Frame):
                         "dialogue_examples": [line.strip() for line in texts[1].get("1.0", tk.END).split('\n') if line.strip()],
                         "behavior_examples": [line.strip() for line in texts[2].get("1.0", tk.END).split('\n') if line.strip()]
                     }
+                    
         return traits
 
     def collect_relationships(self):
@@ -340,8 +361,8 @@ class CharacterCardEditor(tk.Frame):
                 if entries and entries[0].get():
                     name = entries[0].get()
                     relationships[name] = {
-                        "description": [line.strip() for line in texts[0].get("1.0", tk.END).split('\n') if line.strip()],
-                        "features": [line.strip() for line in texts[1].get("1.0", tk.END).split('\n') if line.strip()]
+                    "description": [line.strip() for line in texts[0].get("1.0", tk.END).strip().split('\n') if line.strip()],
+                    "features": [line.strip() for line in texts[1].get("1.0", tk.END).strip().split('\n') if line.strip()]
                     }
         return relationships
 
@@ -371,15 +392,17 @@ class CharacterCardEditor(tk.Frame):
         rel_frame = ttk.Frame(self.relationship_frame)
         rel_frame.pack(fill="x", pady=2)
         
+        # 角色名称
         ttk.Label(rel_frame, text="角色名称：").pack(side="left")
-        name_entry = ttk.Entry(rel_frame, width=20)
-        name_entry.pack(side="left")
+        self.name_entry = ttk.Entry(rel_frame, width=20)
+        self.name_entry.pack(side="left")
         
+        # 关系描述
         ttk.Label(rel_frame, text="关系描述：").pack(side="left", padx=5)
-        desc_entry = tk.Text(rel_frame, height=3, width=40)
-        desc_entry.pack(side="left")
+        self.desc_entry = tk.Text(rel_frame, height=3, width=40)
+        self.desc_entry.pack(side="left")
         
-        # 添加人物特征输入框
+        # 人物特征
         ttk.Label(rel_frame, text="人物特征：").pack(side="left", padx=5)
-        feature_entry = tk.Text(rel_frame, height=3, width=40)
-        feature_entry.pack(side="left")
+        self.feature_entry = tk.Text(rel_frame, height=3, width=40)
+        self.feature_entry.pack(side="left")
