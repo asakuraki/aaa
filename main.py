@@ -239,6 +239,7 @@ def add_relationship():
 # --------------------- 主界面布局 ---------------------
 root = tk.Tk()
 root.title("高级角色卡编辑器 V0.1 未经许可严禁转载倒卖！ By Aki ")
+root.iconbitmap(".\\resource\\img\\角色修改.ico")
 root.geometry("1200x900")
 
 # 滚动区域
@@ -379,13 +380,13 @@ help_menu = tk.Menu(menubar, tearoff=0)
 menubar.add_cascade(label="帮助", menu=help_menu)
 help_menu.add_command(label="关于", command=about.show_about)
 
-# 组件验证代码
-def check_components():
-    print("\n=== 组件验证 ===")
-    print("外貌组件:", list(appearance_entries.keys()))
-    print("服装组件:", list(attire_entries.keys()))
-    print(f"外貌组件数: {len(appearance_entries)} (应有8个)")
-    print(f"服装组件数: {len(attire_entries)} (应有6个)")
+# # 组件验证代码
+# def check_components():
+#     print("\n=== 组件验证 ===")
+#     print("外貌组件:", list(appearance_entries.keys()))
+#     print("服装组件:", list(attire_entries.keys()))
+#     print(f"外貌组件数: {len(appearance_entries)} (应有8个)")
+#     print(f"服装组件数: {len(attire_entries)} (应有6个)")
 
-root.after(100, check_components)
+# root.after(100, check_components)
 root.mainloop()
