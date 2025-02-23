@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import json
 import pyperclip
+import about
+import os
+
 
 # --------------------- 全局变量 ---------------------
 data = {}
@@ -247,6 +250,13 @@ scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=can
 canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
 canvas.configure(yscrollcommand=scrollbar.set)
 
+# 绑定鼠标滚轮事件
+def on_mousewheel(event):
+    canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+
+canvas.bind_all("<MouseWheel>", on_mousewheel)
+scrollable_frame.bind_all("<MouseWheel>", on_mousewheel)
+
 canvas.pack(side="left", fill="both", expand=True)
 scrollbar.pack(side="right", fill="y")
 
@@ -354,15 +364,20 @@ for i, label in enumerate(routine_labels):
 (routine_am_entry, routine_morning_entry, routine_afternoon_entry, 
  routine_evening_entry, routine_night_entry, routine_late_entry) = routine_entries
 
-# 操作按钮
-button_frame = ttk.Frame(scrollable_frame)
-button_frame.pack(pady=10, fill="x")
+# 创建菜单栏
+menubar = tk.Menu(root)
+root.config(menu=menubar)
 
-load_btn = ttk.Button(button_frame, text="加载角色卡", command=load_character_card)
-load_btn.pack(side="left", padx=5)
+# 文件菜单
+file_menu = tk.Menu(menubar, tearoff=0)
+menubar.add_cascade(label="文件", menu=file_menu)
+file_menu.add_command(label="加载角色卡", command=load_character_card)
+file_menu.add_command(label="生成角色卡", command=create_character_card)
 
-generate_btn = ttk.Button(button_frame, text="生成角色卡", command=create_character_card)
-generate_btn.pack(side="left", padx=5)
+# 帮助菜单
+help_menu = tk.Menu(menubar, tearoff=0)
+menubar.add_cascade(label="帮助", menu=help_menu)
+help_menu.add_command(label="关于", command=about.show_about)
 
 # 组件验证代码
 def check_components():
