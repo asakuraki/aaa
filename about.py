@@ -11,15 +11,15 @@ def show_about():
     content_frame.pack(padx=20, pady=20, fill="both", expand=True)
     
     # 标题
-    title_label = ttk.Label(content_frame, text="高级角色卡编辑器", font=("Arial", 16))
+    title_label = ttk.Label(content_frame, text="简要角色卡填写器", font=("Arial", 16))
     title_label.pack(pady=10)
     
     # 版本信息
-    version_label = ttk.Label(content_frame, text="版本: 0.1.0")
+    version_label = ttk.Label(content_frame, text="版本: 0.2.1")
     version_label.pack()
     
     # 作者信息
-    author_label = ttk.Label(content_frame, text="作者: Aki")
+    author_label = ttk.Label(content_frame, text="作者: awaae001 & Aki")
     author_label.pack(pady=10)
     
     # 版权信息
