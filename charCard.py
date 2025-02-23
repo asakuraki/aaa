@@ -138,20 +138,21 @@ class CharacterCardEditor:
         (self.routine_am_entry, self.routine_morning_entry, self.routine_afternoon_entry, 
          self.routine_evening_entry, self.routine_night_entry, self.routine_late_entry) = self.routine_entries
 
-        # 创建菜单栏
-        menubar = tk.Menu(self.root)
-        self.root.config(menu=menubar)
+    # def setup_menubar(self):
+    #     """创建菜单栏"""
+    #     menubar = tk.Menu(self.root)
+    #     self.root.config(menu=menubar)
 
-        # 文件菜单
-        file_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="文件", menu=file_menu)
-        file_menu.add_command(label="加载角色卡", command=self.load_character_card)
-        file_menu.add_command(label="生成角色卡", command=self.create_character_card)
+    #     # 文件菜单
+    #     file_menu = tk.Menu(menubar, tearoff=0)
+    #     menubar.add_cascade(label="文件", menu=file_menu)
+    #     file_menu.add_command(label="加载角色卡", command=self.load_character_card)
+    #     file_menu.add_command(label="生成角色卡", command=self.create_character_card)
 
-        # 帮助菜单
-        help_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="帮助", menu=help_menu)
-        help_menu.add_command(label="关于", command=about.show_about)
+    #     # 帮助菜单
+    #     help_menu = tk.Menu(menubar, tearoff=0)
+    #     menubar.add_cascade(label="帮助", menu=help_menu)
+    #     help_menu.add_command(label="关于", command=about.show_about)
 
     def clear_dynamic_frames(self):
         """清空动态添加的组件"""
