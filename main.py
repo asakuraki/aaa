@@ -1,7 +1,7 @@
 import tkinter as tk
 import about
 from charCard import CharacterCardEditor
-from worldInfoForspace import WorldEditor
+from worldInfoForspace import WorldEditor 
 
 class MainApp:
     def __init__(self, root):
@@ -9,13 +9,19 @@ class MainApp:
         self.root.title("角色与世界编辑器")
         self.root.geometry("1220x600")
 
+        # 创建主容器
+        self.main_container = tk.Frame(self.root)
+        self.main_container.pack(fill="both", expand=True)
+
         # 角色卡编辑器
-        self.character_editor = CharacterCardEditor(self.root)
+        self.character_editor = CharacterCardEditor(self.main_container)
         # 世界书编辑器
-        self.world_editor = WorldEditor(self.root)
+        self.world_editor = WorldEditor(self.main_container)
 
         # 初始显示角色卡编辑器
-        self.character_editor.pack(fill="both", expand=True)
+        self.character_editor.grid(row=0, column=0, sticky="nsew")
+        self.main_container.grid_rowconfigure(0, weight=1)
+        self.main_container.grid_columnconfigure(0, weight=1)
 
         # 创建菜单栏
         self.setup_menubar()
@@ -47,13 +53,17 @@ class MainApp:
 
     def show_page(self, page):
         """切换界面"""
-        self.character_editor.pack_forget()
-        self.world_editor.pack_forget()
+        self.character_editor.grid_forget()
+        self.world_editor.grid_forget()
 
         if page == "character":
-            self.character_editor.pack(fill="both", expand=True)
+            self.root.title("角色卡编辑器")
+            self.root.geometry("1220x600")
+            self.character_editor.grid(row=0, column=0, sticky="nsew")
         elif page == "world":
-            self.world_editor.pack(fill="both", expand=True)
+            self.root.title("世界书编辑器")
+            self.root.geometry("1220x600")
+            self.world_editor.grid(row=0, column=0, sticky="nsew")
 
 if __name__ == "__main__":
     root = tk.Tk()
