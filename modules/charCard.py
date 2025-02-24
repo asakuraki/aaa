@@ -223,12 +223,26 @@ class CharacterCardEditor(tk.Frame):  # 继承 tk.Frame
                 self.add_relationship()
                 dynamic_frames = [w for w in self.relationship_frame.winfo_children() if isinstance(w, ttk.Frame)]
                 last_rel = dynamic_frames[-1] if dynamic_frames else None
-                
+        
                 if last_rel:
                     entry = [child for child in last_rel.winfo_children() if isinstance(child, ttk.Entry)][0]
-                    texts = [child for child in last_rel.winfo_children() if isinstance(child, tk.Text)]
+                    desc_entry = None
+                    feature_entry = None
+            
+                    # 找到关系描述和人物特征的 Text 组件
+                    for child in last_rel.winfo_children():
+                        if isinstance(child, tk.Text):
+                            if hasattr(child, "name") and child.name == "desc_entry":
+                                desc_entry = child
+                            elif hasattr(child, "name") and child.name == "feature_entry":
+                                feature_entry = child
+            
+                    # 插入数据
                     entry.insert(0, name)
-                    texts[0].insert("1.0", "\n".join(desc_list))
+                    if desc_entry:
+                        desc_entry.insert("1.0", "\n".join(desc_list.get("description", [])))
+                    if feature_entry:
+                        feature_entry.insert("1.0", "\n".join(desc_list.get("features", [])))
         
         # 喜好系统
         self.likes_text.delete("1.0", tk.END)
@@ -350,21 +364,35 @@ class CharacterCardEditor(tk.Frame):  # 继承 tk.Frame
         ttk.Label(trait_frame, text="行为示例：").pack(side="left", padx=5)
         behavior_entry = tk.Text(trait_frame, height=2, width=20)
         behavior_entry.pack(side="left")
+        
+        delete_button = ttk.Button(trait_frame, text="删除", command=lambda: self.delete_trait(trait_frame))
+        delete_button.pack(side="right", padx=5)
+    def delete_trait(self, trait_frame):
+        """删除性格特质组件"""
+        trait_frame.destroy()
 
     def add_relationship(self):
         """添加人际关系组件"""
         rel_frame = ttk.Frame(self.relationship_frame)
-        rel_frame.pack(fill="x", pady=2)
-        
-        ttk.Label(rel_frame, text="角色名称：").pack(side="left")
+        rel_frame.grid(row=len(self.relationship_frame.winfo_children()), column=0, sticky="ew", pady=2)  # 使用 grid 代替 pack
+    
+        ttk.Label(rel_frame, text="角色名称：").grid(row=0, column=0, sticky="w")
         name_entry = ttk.Entry(rel_frame, width=20)
-        name_entry.pack(side="left")
-        
-        ttk.Label(rel_frame, text="关系描述：").pack(side="left", padx=5)
+        name_entry.grid(row=0, column=1, sticky="ew")
+  
+        ttk.Label(rel_frame, text="关系描述：").grid(row=1, column=0, sticky="w")
         desc_entry = tk.Text(rel_frame, height=3, width=40)
-        desc_entry.pack(side="left")
+        desc_entry.grid(row=1, column=1, sticky="ew")
+        desc_entry.name = "desc_entry"
         
-        # 添加人物特征输入框
-        ttk.Label(rel_frame, text="人物特征：").pack(side="left", padx=5)
+    # 添加人物特征输入框
+        ttk.Label(rel_frame, text="人物特征：").grid(row=2, column=0, sticky="w")
         feature_entry = tk.Text(rel_frame, height=3, width=40)
-        feature_entry.pack(side="left")
+        feature_entry.grid(row=2, column=1, sticky="ew")
+        feature_entry.name = "feature_entry"
+        
+        delete_button = ttk.Button(rel_frame, text="删除", command=lambda: self.delete_relationship(rel_frame))
+        delete_button.grid(row=0, column=2, rowspan=3, padx=5)
+    def delete_relationship(self, rel_frame):
+        """删除人际关系组件"""
+        rel_frame.destroy()  # 销毁对应的 Frame
