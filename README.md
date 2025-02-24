@@ -8,3 +8,8 @@
 
 世界书
  - 无法保存势力详情
+
+```cmd
+\.venv\Scripts\activate
+python -m PyInstaller --onefile --icon=logo.ico main.py
+```

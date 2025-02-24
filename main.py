@@ -9,11 +9,6 @@ class MainApp:
         self.root.title("角色与世界编辑器")
         self.root.geometry("1220x600")
 
-        # 设置窗口图标
-        try:
-            self.root.iconbitmap("logo.ico")  # 加载本地的 logo.ico 文件
-        except tk.TclError:
-            print("图标文件未找到或格式不支持，请确保 logo.ico 文件存在。")
 
         # 创建主容器
         self.main_container = tk.Frame(self.root)
