@@ -2,15 +2,15 @@ import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import json
 import pyperclip
-import about
-import os
 
-class CharacterCardEditor:
+
+class CharacterCardEditor(tk.Frame):  # 继承 tk.Frame
     def __init__(self, root):
+        super().__init__(root)  # 让其成为 Frame 组件
         self.root = root
         self.data = {}
         self.appearance_entries = {}  # 外貌输入框字典
-        self.attire_entries = {}      # 服装输入框字典
+        self.attire_entries = {}    # 服装输入框字典
         
         self.setup_ui()
         
@@ -31,12 +31,14 @@ class CharacterCardEditor:
         canvas.bind_all("<MouseWheel>", on_mousewheel)
         scrollable_frame.bind_all("<MouseWheel>", on_mousewheel)
 
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
+        canvas.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
 
         # 基础信息
         base_frame = ttk.LabelFrame(scrollable_frame, text="基础信息")
-        base_frame.pack(padx=10, pady=5, fill="x")
+        base_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=5)
 
         ttk.Label(base_frame, text="中文名：").grid(row=0, column=0, sticky="w")
         self.chinese_name_entry = ttk.Entry(base_frame)
@@ -60,13 +62,13 @@ class CharacterCardEditor:
 
         # 背景故事
         bg_frame = ttk.LabelFrame(scrollable_frame, text="背景故事（每行一条）")
-        bg_frame.pack(padx=10, pady=5, fill="x")
+        bg_frame.grid(row=1, column=0, sticky="ew", padx=10, pady=5)
         self.bg_text = tk.Text(bg_frame, height=4)
-        self.bg_text.pack(fill="x")
+        self.bg_text.grid(row=0, column=0, sticky="ew")
 
         # 外貌特征
         appearance_frame = ttk.LabelFrame(scrollable_frame, text="外貌特征")
-        appearance_frame.pack(padx=10, pady=5, fill="x")
+        appearance_frame.grid(row=2, column=0, sticky="ew", padx=10, pady=5)  # 修改为 grid
 
         entries = [
             ("身高", "height"), ("发色", "hair_color"), ("发型", "hairstyle"),
@@ -82,7 +84,7 @@ class CharacterCardEditor:
 
         # 服装信息
         attire_frame = ttk.LabelFrame(scrollable_frame, text="服装设定")
-        attire_frame.pack(padx=10, pady=5, fill="x")
+        attire_frame.grid(row=3, column=0, sticky="ew", padx=10, pady=5)
 
         attire_items = [
             ("上衣", "tops"), ("下装", "bottoms"), ("鞋子", "shoes"),
@@ -97,34 +99,34 @@ class CharacterCardEditor:
 
         # MBTI性格
         mbti_frame = ttk.LabelFrame(scrollable_frame, text="MBTI性格")
-        mbti_frame.pack(padx=10, pady=5, fill="x")
+        mbti_frame.grid(row=4, column=0, sticky="ew", padx=10, pady=5)
         self.mbti_combobox = ttk.Combobox(mbti_frame, values=["INFP", "INTJ", "ENFJ", "ISTP", "其他类型"])
-        self.mbti_combobox.pack()
+        self.mbti_combobox.grid(row=0, column=0, sticky="ew")
 
         # 性格特质
         self.traits_frame = ttk.LabelFrame(scrollable_frame, text="性格特质（点击添加）")
-        self.traits_frame.pack(padx=10, pady=5, fill="x")
+        self.traits_frame.grid(row=5, column=0, sticky="ew", padx=10, pady=5)
         ttk.Button(self.traits_frame, text="+ 添加特质", command=self.add_trait).pack()
 
         # 人际关系
         self.relationship_frame = ttk.LabelFrame(scrollable_frame, text="人际关系（点击添加）")
-        self.relationship_frame.pack(padx=10, pady=5, fill="x")
-        ttk.Button(self.relationship_frame, text="+ 添加关系", command=self.add_relationship).pack()
+        self.relationship_frame.grid(row=6, column=0, sticky="ew", padx=10, pady=5)
+        ttk.Button(self.relationship_frame, text="+ 添加关系", command=self.add_relationship).grid(row=0, column=0, sticky="ew")
 
         # 喜好系统
         likes_frame = ttk.LabelFrame(scrollable_frame, text="喜好（每行一条）")
-        likes_frame.pack(padx=10, pady=5, fill="x")
+        likes_frame.grid(row=7, column=0, sticky="ew", padx=10, pady=5)
         self.likes_text = tk.Text(likes_frame, height=3)
         self.likes_text.pack(fill="x")
 
         dislikes_frame = ttk.LabelFrame(scrollable_frame, text="厌恶（每行一条）")
-        dislikes_frame.pack(padx=10, pady=5, fill="x")
+        dislikes_frame.grid(row=8, column=0, sticky="ew", padx=10, pady=5)
         self.dislikes_text = tk.Text(dislikes_frame, height=3)
-        self.dislikes_text.pack(fill="x")
+        self.dislikes_text.grid(row=0, column=0, sticky="ew")
 
         # 日常作息
         routine_frame = ttk.LabelFrame(scrollable_frame, text="日常作息")
-        routine_frame.pack(padx=10, pady=5, fill="x")
+        routine_frame.grid(row=9, column=0, sticky="ew", padx=10, pady=5)
 
         routine_labels = ["清晨", "上午", "下午", "傍晚", "夜间", "深夜"]
         self.routine_entries = []
@@ -137,22 +139,6 @@ class CharacterCardEditor:
 
         (self.routine_am_entry, self.routine_morning_entry, self.routine_afternoon_entry, 
          self.routine_evening_entry, self.routine_night_entry, self.routine_late_entry) = self.routine_entries
-
-    # def setup_menubar(self):
-    #     """创建菜单栏"""
-    #     menubar = tk.Menu(self.root)
-    #     self.root.config(menu=menubar)
-
-    #     # 文件菜单
-    #     file_menu = tk.Menu(menubar, tearoff=0)
-    #     menubar.add_cascade(label="文件", menu=file_menu)
-    #     file_menu.add_command(label="加载角色卡", command=self.load_character_card)
-    #     file_menu.add_command(label="生成角色卡", command=self.create_character_card)
-
-    #     # 帮助菜单
-    #     help_menu = tk.Menu(menubar, tearoff=0)
-    #     menubar.add_cascade(label="帮助", menu=help_menu)
-    #     help_menu.add_command(label="关于", command=about.show_about)
 
     def clear_dynamic_frames(self):
         """清空动态添加的组件"""
@@ -225,7 +211,7 @@ class CharacterCardEditor:
                 if last_trait:
                     entry = [child for child in last_trait.winfo_children() if isinstance(child, ttk.Entry)][0]
                     texts = [child for child in last_trait.winfo_children() if isinstance(child, tk.Text)]
-                    
+                
                     entry.insert(0, trait)
                     texts[0].insert("1.0", details.get("description", ""))
                     texts[1].insert("1.0", "\n".join(details.get("dialogue_examples", [])))
@@ -237,12 +223,26 @@ class CharacterCardEditor:
                 self.add_relationship()
                 dynamic_frames = [w for w in self.relationship_frame.winfo_children() if isinstance(w, ttk.Frame)]
                 last_rel = dynamic_frames[-1] if dynamic_frames else None
-                
+        
                 if last_rel:
                     entry = [child for child in last_rel.winfo_children() if isinstance(child, ttk.Entry)][0]
-                    texts = [child for child in last_rel.winfo_children() if isinstance(child, tk.Text)]
+                    desc_entry = None
+                    feature_entry = None
+            
+                    # 找到关系描述和人物特征的 Text 组件
+                    for child in last_rel.winfo_children():
+                        if isinstance(child, tk.Text):
+                            if hasattr(child, "name") and child.name == "desc_entry":
+                                desc_entry = child
+                            elif hasattr(child, "name") and child.name == "feature_entry":
+                                feature_entry = child
+            
+                    # 插入数据
                     entry.insert(0, name)
-                    texts[0].insert("1.0", "\n".join(desc_list))
+                    if desc_entry:
+                        desc_entry.insert("1.0", "\n".join(desc_list.get("description", [])))
+                    if feature_entry:
+                        feature_entry.insert("1.0", "\n".join(desc_list.get("features", [])))
         
         # 喜好系统
         self.likes_text.delete("1.0", tk.END)
@@ -348,7 +348,7 @@ class CharacterCardEditor:
         """添加性格特质组件"""
         trait_frame = ttk.Frame(self.traits_frame)
         trait_frame.pack(fill="x", pady=2)
-        
+
         ttk.Label(trait_frame, text="特质名称：").pack(side="left")
         name_entry = ttk.Entry(trait_frame, width=15)
         name_entry.pack(side="left")
@@ -364,21 +364,35 @@ class CharacterCardEditor:
         ttk.Label(trait_frame, text="行为示例：").pack(side="left", padx=5)
         behavior_entry = tk.Text(trait_frame, height=2, width=20)
         behavior_entry.pack(side="left")
+        
+        delete_button = ttk.Button(trait_frame, text="删除", command=lambda: self.delete_trait(trait_frame))
+        delete_button.pack(side="right", padx=5)
+    def delete_trait(self, trait_frame):
+        """删除性格特质组件"""
+        trait_frame.destroy()
 
     def add_relationship(self):
         """添加人际关系组件"""
         rel_frame = ttk.Frame(self.relationship_frame)
-        rel_frame.pack(fill="x", pady=2)
-        
-        ttk.Label(rel_frame, text="角色名称：").pack(side="left")
+        rel_frame.grid(row=len(self.relationship_frame.winfo_children()), column=0, sticky="ew", pady=2)  # 使用 grid 代替 pack
+    
+        ttk.Label(rel_frame, text="角色名称：").grid(row=0, column=0, sticky="w")
         name_entry = ttk.Entry(rel_frame, width=20)
-        name_entry.pack(side="left")
-        
-        ttk.Label(rel_frame, text="关系描述：").pack(side="left", padx=5)
+        name_entry.grid(row=0, column=1, sticky="ew")
+  
+        ttk.Label(rel_frame, text="关系描述：").grid(row=1, column=0, sticky="w")
         desc_entry = tk.Text(rel_frame, height=3, width=40)
-        desc_entry.pack(side="left")
+        desc_entry.grid(row=1, column=1, sticky="ew")
+        desc_entry.name = "desc_entry"
         
-        # 添加人物特征输入框
-        ttk.Label(rel_frame, text="人物特征：").pack(side="left", padx=5)
+    # 添加人物特征输入框
+        ttk.Label(rel_frame, text="人物特征：").grid(row=2, column=0, sticky="w")
         feature_entry = tk.Text(rel_frame, height=3, width=40)
-        feature_entry.pack(side="left")
+        feature_entry.grid(row=2, column=1, sticky="ew")
+        feature_entry.name = "feature_entry"
+        
+        delete_button = ttk.Button(rel_frame, text="删除", command=lambda: self.delete_relationship(rel_frame))
+        delete_button.grid(row=0, column=2, rowspan=3, padx=5)
+    def delete_relationship(self, rel_frame):
+        """删除人际关系组件"""
+        rel_frame.destroy()  # 销毁对应的 Frame
